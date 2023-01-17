@@ -18,9 +18,10 @@ const ReadSubs: React.FC<Props> = ({ token }) => {
   }, [token]);
 
   const read_subs = () => {
-    twitch_api.read_following().then((data) => console.debug(data.data));
+    twitch_api
+      .read_following("88027169")
+      .then((data) => console.debug(data.data));
   };
-
 
   return (
     <div>
@@ -29,8 +30,24 @@ const ReadSubs: React.FC<Props> = ({ token }) => {
         validate User{" "}
       </button>
       <button onClick={read_subs}> Fetch Follows </button>
-      <button onClick={() => twitch_api.read_schedul("96555323").then(a=>console.debug(a.data))}> Fetch Schedule </button>
-      <button onClick={() => twitch_api.read_channel("96555323").then(a=>console.debug(a.data))}> Fetch Channel (?) </button>
+      <button
+        onClick={() =>
+          twitch_api.read_schedul("96555323").then((a) => console.debug(a.data))
+        }
+      >
+        {" "}
+        Fetch Schedule{" "}
+      </button>
+      <button
+        onClick={() =>
+          twitch_api
+            .read_channels(["96555323"])
+            .then((a) => console.debug(a.data))
+        }
+      >
+        {" "}
+        Fetch Channel (?){" "}
+      </button>
     </div>
   );
 };

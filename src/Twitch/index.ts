@@ -1,5 +1,6 @@
-import { AxiosInstance } from "axios";
+import { AxiosInstance, AxiosResponse } from "axios";
 import axios from "axios";
+import { Channel, PagResponse, Schedule, UserFollow } from "./twitch.interface";
 
 const client_id = "wdcgouh30a0u2shuppiwpfp40uwyv3";
 export const validate_user = (token: string) => {
@@ -23,28 +24,58 @@ class API {
       },
     });
   }
-  read_following = () => {
-    return this.axios.get(
-      "https://api.twitch.tv/helix/users/follows?from_id=88027169&first=100"
+
+  private get_paged_data = <T extends Array<any>>(
+    url: string,
+    pag_cursor = ""
+  ): Promise<AxiosResponse<PagResponse<T[]>>> => {
+    let _url = url;
+    if (pag_cursor) {
+      _url = _url + `&after=${pag_cursor}`;
+    }
+
+    return this.axios.get<PagResponse<T>>(_url).then((resp) => {
+      if (resp.data.pagination.cursor) {
+        // we only got a part of the data, fetch the rest recursivly
+        return this.get_paged_data<T>(_url, resp.data.pagination.cursor).then(
+          (inner_resp) => {
+            return {
+              ...inner_resp,
+              data: {
+                ...inner_resp.data,
+                data: [...resp.data.data, ...inner_resp.data.data],
+              },
+            };
+          }
+        );
+      } else {
+        return resp;
+      }
+    });
+  };
+
+  read_following = (from_id: string) => {
+    return this.get_paged_data<UserFollow[]>(
+      `https://api.twitch.tv/helix/users/follows?from_id=${from_id}&first=100`
     );
   };
 
-  read_schedul = (from_id: string) => {
-    return this.axios.get(
-      `https://api.twitch.tv/helix/schedule?broadcaster_id=${from_id}`
+  read_schedul = (
+    from_id: string,
+    start_time: string = "2023-01-01T00:00:00Z"
+  ) => {
+    return this.axios.get<Schedule[]>(
+      `https://api.twitch.tv/helix/schedule?broadcaster_id=${from_id}&start_time=${start_time}&first=25`
     );
-  }
+  };
 
-  read_channel = (from_id: string | string[]) => {
-    let search_string = from_id
-    if (Array.isArray(from_id)){
-      search_string = from_id.join("&id=")
-    }
+  read_channels = (from_ids: string[]) => {
+    const search_string = from_ids.join("&id=");
 
-    return this.axios.get(
+    return this.axios.get<Channel[]>(
       `https://api.twitch.tv/helix/users?id=${search_string}`
     );
-  }
+  };
 }
 
 export default API;
