@@ -1,8 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import TwitchConnectButton from "./TwitchConnectButton";
+import ReadSubs from "./ReadSubs";
 
 function App() {
+  const token = Object.fromEntries(
+    document.location.hash
+      .slice(1)
+      .split("&")
+      .map((pair) => pair.split("=").map((v) => decodeURIComponent(v)))
+  );
+
   return (
     <div className="App">
       <header className="App-header">
@@ -10,14 +19,8 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <TwitchConnectButton />
+        {token && <ReadSubs token={token} />}
       </header>
     </div>
   );
