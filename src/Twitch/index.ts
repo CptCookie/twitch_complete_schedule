@@ -28,6 +28,23 @@ class API {
       "https://api.twitch.tv/helix/users/follows?from_id=88027169&first=100"
     );
   };
+
+  read_schedul = (from_id: string) => {
+    return this.axios.get(
+      `https://api.twitch.tv/helix/schedule?broadcaster_id=${from_id}`
+    );
+  }
+
+  read_channel = (from_id: string | string[]) => {
+    let search_string = from_id
+    if (Array.isArray(from_id)){
+      search_string = from_id.join("&id=")
+    }
+
+    return this.axios.get(
+      `https://api.twitch.tv/helix/users?id=${search_string}`
+    );
+  }
 }
 
 export default API;
