@@ -41,3 +41,7 @@ export interface Channel {
   profile_image_url: string;
   offline_image_url: string;
 }
+
+export interface Auth {
+  access_token: string;
+}

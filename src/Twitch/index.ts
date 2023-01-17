@@ -8,7 +8,7 @@ export const validate_user = (token: string) => {
   let header = new Headers();
   header.set("Authorization", `Bearer ${token}`);
 
-  return fetch(url, { headers: header }).then((data) => data.json());
+  return axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
 };
 
 class API {
