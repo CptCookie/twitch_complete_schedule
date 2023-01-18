@@ -21,7 +21,7 @@ export interface Schedule {
   vacation: string;
 }
 
-interface ScheduleSegment {
+export interface ScheduleSegment {
   canceled_until: string;
   category: {
     id: string;

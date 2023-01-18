@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { validate_user } from "../Twitch";
 import { useAuth } from "./AuthProvider";
 import API from "../Twitch";
-import { Channel, UserFollow } from "../Twitch/twitch.interface";
+import {
+  Channel,
+  ScheduleSegment,
+  UserFollow,
+} from "../Twitch/twitch.interface";
 
 type ChannelState = { [key: string]: Channel };
 const TimeLine = () => {
@@ -10,6 +14,7 @@ const TimeLine = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const [follows, setFollows] = useState<UserFollow[]>();
   const [channels, setChanels] = useState<ChannelState>({});
+  const [schedule, setSchedule] = useState<ScheduleSegment[]>([]);
 
   const twitch_api = useMemo(() => {
     if (auth?.access_token) return new API(auth?.access_token);
@@ -52,8 +57,23 @@ const TimeLine = () => {
     }
   }, [follows]);
 
-  console.debug(userId, follows, channels);
+  useEffect(() => {
+    if (follows && twitch_api) {
+      follows.forEach((follow) => {
+        twitch_api
+          .read_schedul(follow.to_id)
+          .then((resp) => {
+            const newSchedule = [...schedule, ...resp.data.data.segments];
+            setSchedule(newSchedule);
+          })
+          .catch(() => {
+            console.debug(`could not get schedule for ${follow.to_name}`);
+          });
+      });
+    }
+  }, [follows]);
 
+  console.debug({ userId, follows, channels, schedule });
   return (
     <div>
       <h1>Timeline</h1>

@@ -73,7 +73,7 @@ class API {
     from_id: string,
     start_time: string = "2023-01-01T00:00:00Z"
   ) => {
-    return this.axios.get<Schedule[]>(
+    return this.axios.get<PagResponse<Schedule>>(
       `https://api.twitch.tv/helix/schedule?broadcaster_id=${from_id}&start_time=${start_time}&first=25`
     );
   };
