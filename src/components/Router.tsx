@@ -2,6 +2,8 @@ import React from "react";
 import { useAuth } from "./AuthProvider";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Login";
+import TimeLine from "./TimeLine"
+
 const Router: React.FC<React.PropsWithChildren> = ({ children }) => {
   const auth = useAuth();
 
@@ -9,7 +11,7 @@ const Router: React.FC<React.PropsWithChildren> = ({ children }) => {
     <BrowserRouter>
       {children}
       <Routes>
-        {auth.auth?.access_token && <Route path={"/"} element={<>Foo</>} />}
+        {auth.auth?.access_token && <Route path={"/"} element={<TimeLine/>} />}
         {!auth.auth?.access_token && <Route path={"/"} element={<Login />} />}
       </Routes>
     </BrowserRouter>

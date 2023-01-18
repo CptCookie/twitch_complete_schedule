@@ -45,3 +45,10 @@ export interface Channel {
 export interface Auth {
   access_token: string;
 }
+
+export interface TokenValidation {
+  client_id: string;
+  login: string;
+  user_id: string;
+  expires_in: number;
+}
